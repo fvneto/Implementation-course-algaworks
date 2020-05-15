@@ -43,21 +43,15 @@ public class CategoriaResource {
 	    Optional<Categoria> categoria = this.categoriaRepository.findById(codigo);
 	    return categoria.isPresent() ? 
 	            ResponseEntity.ok(categoria.get()) : ResponseEntity.notFound().build();
+	            
 	} // buscarPeloCodigo
-	
-//	@GetMapping("/{codigo}")
-//	public ResponseEntity<Categoria> buscarPeloCodigo(@PathVariable Long codigo) {
-//		 Categoria categoria = categoriaRepository.findOne(codigo);
-//		 return categoria != null ? ResponseEntity.ok(categoria) : ResponseEntity.notFound().build();
-//	}
 	
 	@PostMapping
 	public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
 		Categoria categoriaSalva = categoriaRepository.save(categoria);
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, categoriaSalva.getCodigo()));
 		return ResponseEntity.status(HttpStatus.CREATED).body(categoriaSalva);
+		
 	} // criar()
 	
-	
-
 } // CategoriaResource

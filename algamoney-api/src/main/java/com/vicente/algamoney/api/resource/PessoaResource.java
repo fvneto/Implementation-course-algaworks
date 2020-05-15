@@ -24,7 +24,6 @@ import com.vicente.algamoney.api.model.Pessoa;
 import com.vicente.algamoney.api.repository.PessoaRepository;
 import com.vicente.algamoney.api.service.PessoaService;
 
-
 @RestController
 @RequestMapping("/pessoas")
 public class PessoaResource {
@@ -46,10 +45,12 @@ public class PessoaResource {
 	} // listar
 	
 	@PostMapping
-	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
+	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, 
+			HttpServletResponse response) {
 		
 		Pessoa pessoaSalva = pessoaRepository.save(pessoa);
-		publisher.publishEvent(new RecursoCriadoEvent(this, response, pessoaSalva.getCodigo()));
+		publisher.publishEvent(new RecursoCriadoEvent(this, response, 
+				pessoaSalva.getCodigo()));
 		return ResponseEntity.status(HttpStatus.CREATED).body(pessoaSalva);
 		
 	} // criar
@@ -73,11 +74,19 @@ public class PessoaResource {
 	} // remover
 	
 	@PutMapping("/{codigo}")
-	public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
+	public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, 
+			@Valid @RequestBody Pessoa pessoa) {
 		
 		Pessoa pessoaSalva = pessoaService.atualizar(codigo, pessoa);
 		return ResponseEntity.ok(pessoaSalva);
 		
 	} // atualizar
+	
+	@PutMapping("/{codigo}/ativo")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void atualizarPropriedadeAtivo(@PathVariable Long codigo, 
+			@RequestBody Boolean ativo) {
+		pessoaService.atualizarPropriedadeAtivo(codigo, ativo);
+	}
 
 }
