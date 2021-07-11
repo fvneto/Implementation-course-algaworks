@@ -25,10 +25,16 @@ public class PessoaService {
 
 	  return this.pessoaRepository.save(pessoaSalva);
 	  
-	} //atualizar
+	} // atualizar 	
 	
-	//
-	public Pessoa buscarPessoaPeloCodigo(Long codigo) {
+	public void atualizarPropriedadeAtivo(Long codigo, Boolean ativo) {
+		Pessoa pessoaSalva = buscarPessoaPeloCodigo(codigo);
+		pessoaSalva.setAtivo(ativo);
+		pessoaRepository.save(pessoaSalva);
+		
+	} // buscarPessoaPeloCodigo
+	
+	private Pessoa buscarPessoaPeloCodigo(Long codigo) {
 		Optional<Pessoa> pessoaSalva = pessoaRepository.findById(codigo);
 		
 		if (!pessoaSalva.isPresent()) {
@@ -39,10 +45,4 @@ public class PessoaService {
 		
 	} // buscarPessoaPeloCodigo
 	
-	public void atualizarPropriedadeAtivo(Long codigo, Boolean ativo) {
-		Pessoa pessoaSalva = buscarPessoaPeloCodigo(codigo);
-		pessoaSalva.setAtivo(ativo);
-		pessoaRepository.save(pessoaSalva);
-		
-	} // buscarPessoaPeloCodigo
 }

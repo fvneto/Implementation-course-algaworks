@@ -44,11 +44,11 @@ public class LancamentoResource {
 	
 	@Autowired
 	private ApplicationEventPublisher publisher;
-	
+		
 	@Autowired
 	private MessageSource messageSource;
 	
-		@GetMapping
+	@GetMapping
 	public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable) {
 		return lancamentoRepository.filtrar(lancamentoFilter, pageable);
 	}
@@ -58,13 +58,20 @@ public class LancamentoResource {
 		 return this.lancamentoRepository.findById(codigo)
 			      .map(lancamento -> ResponseEntity.ok(lancamento))
 			      .orElse(ResponseEntity.notFound().build());
-	} // codigo
+	}
 	
 	@PostMapping
 	public ResponseEntity<Lancamento> criar(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response) {
 		Lancamento lancamentoSalvo = lancamentoService.salvar(lancamento);
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoSalvo.getCodigo()));
 		return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoSalvo);
+	}
+	
+	@DeleteMapping("/{codigo}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void remover(@PathVariable Long codigo) {
+		
+		this.lancamentoRepository.deleteById(codigo);
 	}
 	
 	//Tratamento de excetion especifico do lancamento
@@ -76,12 +83,6 @@ public class LancamentoResource {
 		return ResponseEntity.badRequest().body(erros);
 	}
 	
-	@DeleteMapping("/{codigo}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void remover(@PathVariable Long codigo) {
-		
-		this.lancamentoRepository.deleteById(codigo);
-	  
-	} // remover
+	
 	
 }
